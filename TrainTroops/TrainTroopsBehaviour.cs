@@ -3,6 +3,7 @@ using TaleWorlds.Core;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Localization;
+using SandBox.GauntletUI.Map;
 
 namespace TrainTroops
 {
@@ -14,6 +15,7 @@ namespace TrainTroops
         public override void RegisterEvents()
         {
             CampaignEvents.DailyTickPartyEvent.AddNonSerializedListener(this, new System.Action<MobileParty>(this.addXp));
+            
         }
 
         public override void SyncData(IDataStore dataStore)
@@ -27,60 +29,84 @@ namespace TrainTroops
             {
 
                 int totalXPEarned = 0;
-                int troopsReadyToUpgradeCount = 0;
                 Dictionary<string, int> troopsReadyToUpgrade = new Dictionary<string, int>();
                 for (int i = 0; i < party.MemberRoster.Count; i++)
                 {
-                    CharacterObject troop = party.MemberRoster.GetCharacterAtIndex(i);
+                    TroopRosterElement troop = party.MemberRoster.GetElementCopyAtIndex(i);
                     //Only gain XP if character LVL is lower than the leader's LVL
-                    //if (troop.Level < Hero.MainHero.Level)
-                    //{
-                    int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
-                    int lvlDifference = Hero.MainHero.Level - troop.Level;
-                    //Gain XP: leadership skill * 3 + level difference * 10
-                    int xpEarned = leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier;
-                    party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
-                    //Is troop now ready to upgrade?
-                    if (troop.GetXpValue() > troop.UpgradeXpCost)
+                    if (troop.Character.Level < Hero.MainHero.Level)
                     {
-                        troopsReadyToUpgradeCount++;
-                        //TODO: get the localized troop name, for now it only gets it in english
-                        string troopName = LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Name.GetID());
-                        //Count how many troops of each type are ready to upgrade
-                        if (troopsReadyToUpgrade.ContainsKey(troopName))
-                        {
-                            troopsReadyToUpgrade[troopName]++;
-                        }
-                        else
-                        {
-                            troopsReadyToUpgrade.Add(troopName, 0);
-                        }
-                    }
+                        int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
+                        int lvlDifference = Hero.MainHero.Level - troop.Character.Level;
+                        int trainableTroopCount = troop.Number - troop.NumberReadyToUpgrade;
 
-                    totalXPEarned += xpEarned;
-                }
-                //}
-                string troopsReadyToUpgradeMessage = "";
-                if (troopsReadyToUpgrade.Count != 0)
-                {
-                    troopsReadyToUpgradeMessage += " (";
-                    for (int i = 0; i < troopsReadyToUpgrade.Count; i++)
-                    {
-                        troopsReadyToUpgradeMessage += troopsReadyToUpgrade.Keys.ElementAt(i) + ": " + troopsReadyToUpgrade[troopsReadyToUpgrade.Keys.ElementAt(i)];
-                        if (i != troopsReadyToUpgrade.Count - 1)
+                        //Gain XP: leadership skill * 3 + level difference * 10
+                        Logger("Troop: " + LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Character.Name.GetID()) + " Leadership: " + leaderLeadership + " xpEarnedByLevel: " + leaderLeadership * troopXPMultiplier + " xpByLevelDifference: " + lvlDifference * levelDifferenceMultiplier + " trainable troop count: " + trainableTroopCount);
+                        
+                        //Perform the math
+                        int xpEarned = (leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier) * trainableTroopCount;
+                        party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
+                        //Report troops ready to upgrade
+                        if (troop.NumberReadyToUpgrade != 0)
                         {
-                            troopsReadyToUpgradeMessage += ", ";
+                            //TODO: get the localized troop name, for now it only gets it in english
+                            string troopName = LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Character.Name.GetID());
+                            //Count how many troops of each type are ready to upgrade
+                            troopsReadyToUpgrade.Add(troopName, troop.NumberReadyToUpgrade);
                         }
+
+                        totalXPEarned += xpEarned;
                     }
-                    troopsReadyToUpgradeMessage += ")";
                 }
-                InformationManager.DisplayMessage(new InformationMessage("Total training XP for the day: " + totalXPEarned + troopsReadyToUpgrade));
+
+                InformationManager.DisplayMessage(new InformationMessage("Total training XP for the day: " + totalXPEarned + getTroopsReadyToUpgradeMessage(troopsReadyToUpgrade)));
             }
 
         }
 
+        private static string getTroopsReadyToUpgradeMessage(Dictionary<string, int> troopsReadyToUpgrade)
+        {
+            string troopsReadyToUpgradeMessage = "";
+            if (troopsReadyToUpgrade.Count != 0)
+            {
+                troopsReadyToUpgradeMessage += " Troops ready to upgrade: ";
+                for (int i = 0; i < troopsReadyToUpgrade.Count; i++)
+                {
+                    troopsReadyToUpgradeMessage += troopsReadyToUpgrade.Keys.ElementAt(i) + ": " + troopsReadyToUpgrade[troopsReadyToUpgrade.Keys.ElementAt(i)];
+                    if (i != troopsReadyToUpgrade.Count - 1)
+                    {
+                        troopsReadyToUpgradeMessage += ", ";
+                    }
+                }
+                troopsReadyToUpgradeMessage += ".";
+            }
+            return troopsReadyToUpgradeMessage;
+        }
+
+        public static void Logger(string lines)
+        {
+            //Write the string to a file.append mode is enabled so that the log
+            //lines get appended to  test.txt than wiping content and writing the log
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("./trainTroops.log", true))
+            {
+                file.WriteLine(lines);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Dictionary<string, int> troopsToUpgrade = new Dictionary<string, int>();
+            troopsToUpgrade.Add("Footman", 3);
+            troopsToUpgrade.Add("Cavalry", 1);
+            // Display the number of command line arguments.
+            Logger(getTroopsReadyToUpgradeMessage(troopsToUpgrade));
+            System.Console.WriteLine(getTroopsReadyToUpgradeMessage(troopsToUpgrade));
+        }
+
 
     }
+
 }
 
 /*
