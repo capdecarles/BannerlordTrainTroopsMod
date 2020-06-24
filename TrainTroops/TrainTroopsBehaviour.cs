@@ -1,9 +1,8 @@
 ﻿using TaleWorlds.CampaignSystem;
-using TaleWorlds.MountAndBlade;
 using TaleWorlds.Core;
-using TaleWorlds.MountAndBlade.GauntletUI;
 using System.Collections.Generic;
 using System.Linq;
+using TaleWorlds.Localization;
 
 namespace TrainTroops
 {
@@ -36,32 +35,35 @@ namespace TrainTroops
                     //Only gain XP if character LVL is lower than the leader's LVL
                     //if (troop.Level < Hero.MainHero.Level)
                     //{
-                        int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
-                        int lvlDifference = Hero.MainHero.Level - troop.Level;
-                        //Gain XP: leadership skill * 3 + level difference * 10
-                        int xpEarned = leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier;
-                        party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
-                        //Is troop now ready to upgrade?
-                        if (troop.GetXpValue() > troop.UpgradeXpCost)
+                    int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
+                    int lvlDifference = Hero.MainHero.Level - troop.Level;
+                    //Gain XP: leadership skill * 3 + level difference * 10
+                    int xpEarned = leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier;
+                    party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
+                    //Is troop now ready to upgrade?
+                    if (troop.GetXpValue() > troop.UpgradeXpCost)
+                    {
+                        troopsReadyToUpgradeCount++;
+                        //TODO: get the localized troop name, for now it only gets it in english
+                        string troopName = LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Name.GetID());
+                        //Count how many troops of each type are ready to upgrade
+                        if (troopsReadyToUpgrade.ContainsKey(troopName))
                         {
-                            troopsReadyToUpgradeCount++;
-                            //Count how many troops of each type are ready to upgrade
-                            if (troopsReadyToUpgrade.ContainsKey(troop.Name.ToString()))
-                            {
-                                troopsReadyToUpgrade[troop.Name.ToString()]++;
-                            } else
-                            {
-                                troopsReadyToUpgrade.Add(troop.Name.ToString(), 0);
-                            }
+                            troopsReadyToUpgrade[troopName]++;
                         }
-                            
-                        totalXPEarned += xpEarned;
+                        else
+                        {
+                            troopsReadyToUpgrade.Add(troopName, 0);
+                        }
                     }
+
+                    totalXPEarned += xpEarned;
+                }
                 //}
                 string troopsReadyToUpgradeMessage = "";
                 if (troopsReadyToUpgrade.Count != 0)
                 {
-                    troopsReadyToUpgradeMessage += "(";
+                    troopsReadyToUpgradeMessage += " (";
                     for (int i = 0; i < troopsReadyToUpgrade.Count; i++)
                     {
                         troopsReadyToUpgradeMessage += troopsReadyToUpgrade.Keys.ElementAt(i) + ": " + troopsReadyToUpgrade[troopsReadyToUpgrade.Keys.ElementAt(i)];
@@ -74,10 +76,10 @@ namespace TrainTroops
                 }
                 InformationManager.DisplayMessage(new InformationMessage("Total training XP for the day: " + totalXPEarned + troopsReadyToUpgrade));
             }
-            
+
         }
 
-       
+
     }
 }
 
