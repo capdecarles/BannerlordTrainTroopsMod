@@ -17,26 +17,8 @@ namespace TrainTroops
 			if (gameStarterObject != null)
 			{
 				(gameStarterObject as CampaignGameStarter).AddBehavior(new MobilePartyDailyTickBehaviour());
-				gameStarterObject.AddModel(new TweakedCombatXpModel());
-                Hero.MainHero.AddSkillXp(DefaultSkills.Athletics, 1999);
             }
 		}
-
-		private class TweakedCombatXpModel : DefaultCombatXpModel
-		{
-
-            public override void GetXpFromHit(CharacterObject attackerTroop, CharacterObject attackedTroop, int damage, bool isFatal, MissionTypeEnum missionType, out int xpAmount)
-            {
-                base.GetXpFromHit(attackerTroop, attackedTroop, damage, isFatal, missionType, out xpAmount);
-                xpAmount *= 15;
-            }
-
-            public override float GetXpMultiplierFromShotDifficulty(float shotDifficulty)
-            {
-                return base.GetXpMultiplierFromShotDifficulty(shotDifficulty * 50);
-            }
-        }
-
 
 	}
 }
