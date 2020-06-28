@@ -3,23 +3,21 @@ using TaleWorlds.Core;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Localization;
-using SandBox.GauntletUI.Map;
+using TaleWorlds.CampaignSystem.SandBox.CampaignBehaviors;
 
 namespace TrainTroops
 {
     class MobilePartyDailyTickBehaviour : CampaignBehaviorBase
     {
 
-        private int troopXPMultiplier = 3;
-        private int levelDifferenceMultiplier = 10;
+        //The higher this is, the more impact leadership will have on training.
+        private const int troopXPMultiplier = 3;
+        //The higher this is, the more impact level difference will have on training.
+        private const int levelDifferenceMultiplier = 10;
+
         public override void RegisterEvents()
         {
             CampaignEvents.DailyTickPartyEvent.AddNonSerializedListener(this, new System.Action<MobileParty>(this.addXp));
-            
-        }
-
-        public override void SyncData(IDataStore dataStore)
-        {
         }
 
         private void addXp(MobileParty party)
@@ -32,6 +30,7 @@ namespace TrainTroops
                 Dictionary<string, int> troopsReadyToUpgrade = new Dictionary<string, int>();
                 for (int i = 0; i < party.MemberRoster.Count; i++)
                 {
+                    //IMPORTANT: bear in mind we only get a COPY. So after any changes to the troop, info will be inconsistent.
                     TroopRosterElement troop = party.MemberRoster.GetElementCopyAtIndex(i);
                     //Only gain XP if character LVL is lower than the leader's LVL
                     if (troop.Character.Level < Hero.MainHero.Level)
@@ -46,13 +45,18 @@ namespace TrainTroops
                         //Perform the math
                         int xpEarned = (leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier) * trainableTroopCount;
                         party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
+                        int troopsReadyToUpgradeCount = party.MemberRoster.GetElementCopyAtIndex(i).NumberReadyToUpgrade;
                         //Report troops ready to upgrade
-                        if (troop.NumberReadyToUpgrade != 0)
+                        if (troopsReadyToUpgradeCount != 0)
                         {
+                            //Will update the party button notification so that the red icon is shown (?)
+                            //PlayerUpdateTracker.Current.GetPartyNotificationText();
+                            //PlayerUpdateTracker.Current.UpdatePartyNotification();
+                            
                             //TODO: get the localized troop name, for now it only gets it in english
                             string troopName = LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Character.Name.GetID());
                             //Count how many troops of each type are ready to upgrade
-                            troopsReadyToUpgrade.Add(troopName, troop.NumberReadyToUpgrade);
+                            troopsReadyToUpgrade.Add(troopName, troopsReadyToUpgradeCount);
                         }
 
                         totalXPEarned += xpEarned;
@@ -60,6 +64,7 @@ namespace TrainTroops
                 }
 
                 InformationManager.DisplayMessage(new InformationMessage("Total training XP for the day: " + totalXPEarned + getTroopsReadyToUpgradeMessage(troopsReadyToUpgrade)));
+                
             }
 
         }
@@ -94,16 +99,9 @@ namespace TrainTroops
             }
         }
 
-        static void Main(string[] args)
+        public override void SyncData(IDataStore dataStore)
         {
-            Dictionary<string, int> troopsToUpgrade = new Dictionary<string, int>();
-            troopsToUpgrade.Add("Footman", 3);
-            troopsToUpgrade.Add("Cavalry", 1);
-            // Display the number of command line arguments.
-            Logger(getTroopsReadyToUpgradeMessage(troopsToUpgrade));
-            System.Console.WriteLine(getTroopsReadyToUpgradeMessage(troopsToUpgrade));
         }
-
 
     }
 

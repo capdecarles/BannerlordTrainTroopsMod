@@ -1,5 +1,5 @@
 ﻿<Module>
-  <Name value="Train Troops with Leadership"/>
+  <Name value="Train Troops with Leadership and Level"/>
   <Id value="TrainTroops"/>
   <Version value="v1.0.0"/>
   <SingleplayerModule value="true"/>
