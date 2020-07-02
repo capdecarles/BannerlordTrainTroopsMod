@@ -56,7 +56,17 @@ namespace TrainTroops
                             //TODO: get the localized troop name, for now it only gets it in english
                             string troopName = LocalizedTextManager.GetTranslatedText(LocalizedTextManager.DefaultEnglishLanguageId, troop.Character.Name.GetID());
                             //Count how many troops of each type are ready to upgrade
-                            troopsReadyToUpgrade.Add(troopName, troopsReadyToUpgradeCount);
+
+                            //If a troop with the same name has already been counted, add it
+                            if (troopsReadyToUpgrade.ContainsKey(troopName))
+                            {
+                                troopsReadyToUpgrade[troopName] += troopsReadyToUpgradeCount;
+                            } 
+                            //Else add it anew
+                            else
+                            {
+                                troopsReadyToUpgrade.Add(troopName, troopsReadyToUpgradeCount);
+                            }
                         }
 
                         totalXPEarned += xpEarned;
