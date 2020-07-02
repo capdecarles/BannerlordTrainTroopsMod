@@ -1,6 +1,0 @@
-D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\Modules\TrainTroops\bin\Win64_Shipping_Client\TrainTroops.dll
-D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\Modules\TrainTroops\bin\Win64_Shipping_Client\TrainTroops.pdb
-C:\Users\capde\source\repos\TrainTroops\TrainTroops\obj\Debug\TrainTroops.csproj.CoreCompileInputs.cache
-C:\Users\capde\source\repos\TrainTroops\TrainTroops\obj\Debug\TrainTroops.dll
-C:\Users\capde\source\repos\TrainTroops\TrainTroops\obj\Debug\TrainTroops.pdb
-C:\Users\capde\source\repos\TrainTroops\TrainTroops\obj\Debug\TrainTroops.csprojAssemblyReference.cache
