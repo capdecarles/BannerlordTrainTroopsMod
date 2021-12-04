@@ -32,16 +32,26 @@ namespace TrainTroops
                 {
                     //IMPORTANT: bear in mind we only get a COPY. So after any changes to the troop, info will be inconsistent.
                     TroopRosterElement troop = party.MemberRoster.GetElementCopyAtIndex(i);
-                    //Only gain XP if character LVL is lower than the leader's LVL
-                    if (troop.Character.Level < Hero.MainHero.Level)
+                    //Only gain XP if character LVL is lower than the leader's LVL AND the troop can be upgraded
+                    if (troop.Character.Level < Hero.MainHero.Level && !troop.Character.UpgradeTargets.IsEmpty())
                     {
                         int lvlDifference = Hero.MainHero.Level - troop.Character.Level;
-                        int trainableTroopCount = troop.Number - troop.NumberReadyToUpgrade;
+
+                        //Get the least xp this troop needs to lvl up (seems it could have different troops to level up to and need different xp for each one)
+                        int minXPForUpgrade = troop.Character.GetUpgradeXpCost(party.Party, 0);
+                        int targetIndex = 1;
+                        while (targetIndex < troop.Character.UpgradeTargets.Length) {
+                            minXPForUpgrade = System.Math.Min(minXPForUpgrade, troop.Character.GetUpgradeXpCost(party.Party, targetIndex));
+                            targetIndex++;
+                        }
+
+
+                        int trainableTroopCount = troop.Number - troop.Xp / minXPForUpgrade;
 
                         //Perform the math
                         int xpEarned = (leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier) * trainableTroopCount;
                         party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
-                        int troopsReadyToUpgradeCount = party.MemberRoster.GetElementCopyAtIndex(i).NumberReadyToUpgrade;
+                        int troopsReadyToUpgradeCount = (troop.Xp + xpEarned) / minXPForUpgrade;
                         //Report troops ready to upgrade
                         if (troopsReadyToUpgradeCount != 0)
                         {
