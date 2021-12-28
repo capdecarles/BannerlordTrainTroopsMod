@@ -21,7 +21,7 @@ namespace TrainTroops
         private void addXp(MobileParty party)
         {
             //Only train troops in main hero party to alleviate CPU load
-            if (party.IsActive && !party.IsLeaderless && party.IsMainParty && party.LeaderHero != null && party.LeaderHero == Hero.MainHero)
+            if (party.IsMainParty)
             {
 
                 int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
