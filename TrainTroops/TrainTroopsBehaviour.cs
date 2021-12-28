@@ -2,17 +2,12 @@
 using TaleWorlds.Core;
 using System.Collections.Generic;
 using System.Linq;
+using TrainTroops.Settings;
 
 namespace TrainTroops
 {
     class MobilePartyDailyTickBehaviour : CampaignBehaviorBase
     {
-
-        //The higher this is, the more impact leadership will have on training.
-        private const int troopXPMultiplier = 3;
-        //The higher this is, the more impact level difference will have on training.
-        private const int levelDifferenceMultiplier = 10;
-
         public override void RegisterEvents()
         {
             CampaignEvents.DailyTickPartyEvent.AddNonSerializedListener(this, new System.Action<MobileParty>(this.addXp));
@@ -23,7 +18,6 @@ namespace TrainTroops
             //Only train troops in main hero party to alleviate CPU load
             if (party.IsMainParty)
             {
-
                 int leaderLeadership = Hero.MainHero.GetSkillValue(DefaultSkills.Leadership);
 
                 int totalXPEarned = 0;
@@ -49,7 +43,7 @@ namespace TrainTroops
                         int trainableTroopCount = troop.Number - troop.Xp / minXPForUpgrade;
 
                         //Perform the math
-                        int xpEarned = (leaderLeadership * troopXPMultiplier + lvlDifference * levelDifferenceMultiplier) * trainableTroopCount;
+                        int xpEarned = (leaderLeadership * TrainTroopsSettings.Instance.TroopXPMultiplier + lvlDifference * TrainTroopsSettings.Instance.LevelDifferenceMultiplier) * trainableTroopCount;
                         party.Party.MemberRoster.AddXpToTroopAtIndex(xpEarned, i);
                         int troopsReadyToUpgradeCount = (troop.Xp + xpEarned) / minXPForUpgrade;
                         //Report troops ready to upgrade
