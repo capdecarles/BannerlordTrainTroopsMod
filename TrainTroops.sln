@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainTroops", "TrainTroops\TrainTroops.csproj", "{C5547D01-B2F1-4185-B7B8-9FE3C810DAAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainTroops", "TrainTroops\TrainTroops.csproj", "{7A743EF8-1611-46BE-A3BE-85E27EC889EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C5547D01-B2F1-4185-B7B8-9FE3C810DAAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5547D01-B2F1-4185-B7B8-9FE3C810DAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5547D01-B2F1-4185-B7B8-9FE3C810DAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5547D01-B2F1-4185-B7B8-9FE3C810DAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A743EF8-1611-46BE-A3BE-85E27EC889EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A743EF8-1611-46BE-A3BE-85E27EC889EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A743EF8-1611-46BE-A3BE-85E27EC889EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A743EF8-1611-46BE-A3BE-85E27EC889EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B5B1BDC4-94D9-46B2-A915-A25BEDC33CB7}
+		SolutionGuid = {3BB934F3-C5C8-4381-8948-6DCE3A3CD260}
 	EndGlobalSection
 EndGlobal
