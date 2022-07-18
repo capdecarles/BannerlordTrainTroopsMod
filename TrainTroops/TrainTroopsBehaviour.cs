@@ -1,4 +1,6 @@
 ﻿using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
 using System.Collections.Generic;
 using System.Linq;

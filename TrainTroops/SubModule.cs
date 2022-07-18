@@ -2,7 +2,6 @@
 using TaleWorlds.MountAndBlade;
 using System;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.SandBox.GameComponents.Map;
 
 namespace TrainTroops
 {
