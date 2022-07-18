@@ -2,7 +2,6 @@
 using TaleWorlds.MountAndBlade;
 using System;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.SandBox.GameComponents.Map;
 
 namespace TrainTroops
 {
@@ -12,12 +11,13 @@ namespace TrainTroops
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
 		{
-			base.OnGameStart(game, gameStarterObject);
 
-			if (gameStarterObject != null)
-			{
+			if (!(game.GameType is Campaign))
+				return;
+
+			if (gameStarterObject is CampaignGameStarter)
 				(gameStarterObject as CampaignGameStarter).AddBehavior(new MobilePartyDailyTickBehaviour());
-            }
+
 		}
 
 	}
